@@ -5,7 +5,7 @@
 #define AGUA 0
 #define NAVIO 3
 
-// Função para exibir o tabuleiro
+// Função para exibir o tabuleiro no console
 void exibirTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
     printf("\nTabuleiro:\n");
     for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
@@ -16,58 +16,90 @@ void exibirTabuleiro(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO]) {
     }
 }
 
+// Função para verificar sobreposição e limites de navio horizontal
+int posicionarNavioHorizontal(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    if (coluna + TAMANHO_NAVIO > TAMANHO_TABULEIRO) return 0;
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha][coluna + i] != AGUA)
+            return 0;
+    }
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha][coluna + i] = NAVIO;
+    }
+
+    return 1;
+}
+
+// Função para verificar sobreposição e limites de navio vertical
+int posicionarNavioVertical(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO_TABULEIRO) return 0;
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna] != AGUA)
+            return 0;
+    }
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna] = NAVIO;
+    }
+
+    return 1;
+}
+
+// Função para posicionar navio na diagonal principal (\)
+int posicionarNavioDiagonalPrincipal(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO_TABULEIRO || coluna + TAMANHO_NAVIO > TAMANHO_TABULEIRO)
+        return 0;
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna + i] != AGUA)
+            return 0;
+    }
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna + i] = NAVIO;
+    }
+
+    return 1;
+}
+
+// Função para posicionar navio na diagonal secundária (/)
+int posicionarNavioDiagonalSecundaria(int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], int linha, int coluna) {
+    if (linha + TAMANHO_NAVIO > TAMANHO_TABULEIRO || coluna - (TAMANHO_NAVIO - 1) < 0)
+        return 0;
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        if (tabuleiro[linha + i][coluna - i] != AGUA)
+            return 0;
+    }
+
+    for (int i = 0; i < TAMANHO_NAVIO; i++) {
+        tabuleiro[linha + i][coluna - i] = NAVIO;
+    }
+
+    return 1;
+}
+
 int main() {
-    // Matriz que representa o tabuleiro (inicializado com 0 - água)
+    // Declara e inicializa o tabuleiro com água
     int tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO] = {0};
 
-    // Vetores que representam os navios (todos os elementos valem 3)
-    int navioHorizontal[TAMANHO_NAVIO] = {NAVIO, NAVIO, NAVIO};
-    int navioVertical[TAMANHO_NAVIO] = {NAVIO, NAVIO, NAVIO};
+    // Posiciona navios fixos (pode ajustar posições conforme desejar)
+    if (!posicionarNavioHorizontal(tabuleiro, 1, 2))
+        printf("Erro ao posicionar navio horizontal.\n");
 
-    // Coordenadas iniciais dos navios (ajuste conforme necessário)
-    int linhaHorizontal = 2;
-    int colunaHorizontal = 4;
+    if (!posicionarNavioVertical(tabuleiro, 4, 7))
+        printf("Erro ao posicionar navio vertical.\n");
 
-    int linhaVertical = 5;
-    int colunaVertical = 1;
+    if (!posicionarNavioDiagonalPrincipal(tabuleiro, 0, 0))
+        printf("Erro ao posicionar navio diagonal principal.\n");
 
-    // Validação de limites para o navio horizontal
-    if (colunaHorizontal + TAMANHO_NAVIO <= TAMANHO_TABULEIRO) {
-        for (int i = 0; i < TAMANHO_NAVIO; i++) {
-            // Verifica sobreposição
-            if (tabuleiro[linhaHorizontal][colunaHorizontal + i] != AGUA) {
-                printf("Erro: sobreposição detectada no navio horizontal.\n");
-                return 1;
-            }
-        }
-        // Posicionamento do navio horizontal
-        for (int i = 0; i < TAMANHO_NAVIO; i++) {
-            tabuleiro[linhaHorizontal][colunaHorizontal + i] = navioHorizontal[i];
-        }
-    } else {
-        printf("Erro: navio horizontal fora dos limites do tabuleiro.\n");
-        return 1;
-    }
+    if (!posicionarNavioDiagonalSecundaria(tabuleiro, 5, 5))
+        printf("Erro ao posicionar navio diagonal secundária.\n");
 
-    // Validação de limites para o navio vertical
-    if (linhaVertical + TAMANHO_NAVIO <= TAMANHO_TABULEIRO) {
-        for (int i = 0; i < TAMANHO_NAVIO; i++) {
-            // Verifica sobreposição
-            if (tabuleiro[linhaVertical + i][colunaVertical] != AGUA) {
-                printf("Erro: sobreposição detectada no navio vertical.\n");
-                return 1;
-            }
-        }
-        // Posicionamento do navio vertical
-        for (int i = 0; i < TAMANHO_NAVIO; i++) {
-            tabuleiro[linhaVertical + i][colunaVertical] = navioVertical[i];
-        }
-    } else {
-        printf("Erro: navio vertical fora dos limites do tabuleiro.\n");
-        return 1;
-    }
-
-    // Exibe o tabuleiro final com os navios posicionados
+    // Exibe o resultado final
     exibirTabuleiro(tabuleiro);
 
     return 0;
