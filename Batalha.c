@@ -6,7 +6,12 @@
 #define AGUA 0
 #define HABILIDADE 5
 
-// Exibição clara do tabuleiro
+// Função auxiliar para valor absoluto (em vez de usar abs da stdlib)
+int valorAbsoluto(int x) {
+    return (x < 0) ? -x : x;
+}
+
+// Exibe o tabuleiro no console
 void exibirTabuleiro(int tabuleiro[TAM][TAM]) {
     printf("\nTabuleiro:\n");
     for (int i = 0; i < TAM; i++) {
@@ -17,7 +22,7 @@ void exibirTabuleiro(int tabuleiro[TAM][TAM]) {
     }
 }
 
-// Cria matriz cone (forma piramidal apontando para baixo)
+// Cria habilidade em cone (piramidal)
 void criarCone(int matriz[TAM_HAB][TAM_HAB]) {
     for (int i = 0; i < TAM_HAB; i++) {
         for (int j = 0; j < TAM_HAB; j++) {
@@ -29,7 +34,7 @@ void criarCone(int matriz[TAM_HAB][TAM_HAB]) {
     }
 }
 
-// Cria matriz cruz (horizontal e vertical com centro)
+// Cria habilidade em cruz
 void criarCruz(int matriz[TAM_HAB][TAM_HAB]) {
     for (int i = 0; i < TAM_HAB; i++) {
         for (int j = 0; j < TAM_HAB; j++) {
@@ -41,11 +46,11 @@ void criarCruz(int matriz[TAM_HAB][TAM_HAB]) {
     }
 }
 
-// Cria matriz octaedro (losango frontal)
+// Cria habilidade em octaedro (losango)
 void criarOctaedro(int matriz[TAM_HAB][TAM_HAB]) {
     for (int i = 0; i < TAM_HAB; i++) {
         for (int j = 0; j < TAM_HAB; j++) {
-            if (abs(i - TAM_HAB / 2) + abs(j - TAM_HAB / 2) <= TAM_HAB / 2)
+            if (valorAbsoluto(i - TAM_HAB / 2) + valorAbsoluto(j - TAM_HAB / 2) <= TAM_HAB / 2)
                 matriz[i][j] = 1;
             else
                 matriz[i][j] = 0;
@@ -53,7 +58,7 @@ void criarOctaedro(int matriz[TAM_HAB][TAM_HAB]) {
     }
 }
 
-// Sobrepõe a habilidade no tabuleiro com base na origem
+// Aplica habilidade no tabuleiro
 void aplicarHabilidade(int tabuleiro[TAM][TAM], int habilidade[TAM_HAB][TAM_HAB], int origemLinha, int origemColuna) {
     for (int i = 0; i < TAM_HAB; i++) {
         for (int j = 0; j < TAM_HAB; j++) {
@@ -69,7 +74,7 @@ void aplicarHabilidade(int tabuleiro[TAM][TAM], int habilidade[TAM_HAB][TAM_HAB]
     }
 }
 
-// Posiciona manualmente navios para visualização
+// Posiciona os 4 navios
 void posicionarNavios(int tabuleiro[TAM][TAM]) {
     // Horizontal
     for (int i = 0; i < 3; i++)
@@ -79,7 +84,7 @@ void posicionarNavios(int tabuleiro[TAM][TAM]) {
     for (int i = 0; i < 3; i++)
         tabuleiro[5 + i][1] = NAVIO;
 
-    // Diagonal \
+    // Diagonal 
     for (int i = 0; i < 3; i++)
         tabuleiro[0 + i][0 + i] = NAVIO;
 
@@ -90,26 +95,20 @@ void posicionarNavios(int tabuleiro[TAM][TAM]) {
 
 int main() {
     int tabuleiro[TAM][TAM] = {0};
-
-    // Matrizes das habilidades
     int cone[TAM_HAB][TAM_HAB];
     int cruz[TAM_HAB][TAM_HAB];
     int octaedro[TAM_HAB][TAM_HAB];
 
-    // Criação das formas
     criarCone(cone);
     criarCruz(cruz);
     criarOctaedro(octaedro);
 
-    // Posiciona os navios fixos
     posicionarNavios(tabuleiro);
 
-    // Aplica as habilidades no tabuleiro com ponto de origem
-    aplicarHabilidade(tabuleiro, cone, 2, 2);       // Cone centrado em (2,2)
-    aplicarHabilidade(tabuleiro, cruz, 5, 5);       // Cruz centrado em (5,5)
-    aplicarHabilidade(tabuleiro, octaedro, 7, 7);   // Octaedro centrado em (7,7)
+    aplicarHabilidade(tabuleiro, cone, 2, 2);
+    aplicarHabilidade(tabuleiro, cruz, 5, 5);
+    aplicarHabilidade(tabuleiro, octaedro, 7, 7);
 
-    // Exibe resultado final
     exibirTabuleiro(tabuleiro);
 
     return 0;
